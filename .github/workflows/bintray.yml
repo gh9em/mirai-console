@@ -26,12 +26,49 @@ jobs:
         run: ./gradlew clean
       - name: Gradle build
         run: ./gradlew build # if test's failed, don't publish
-      - name: Check keys
-        run: ./gradlew :mirai-console:ensureBintrayAvailable -Dbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_user=${{ secrets.BINTRAY_USER }} -Dbintray_key=${{ secrets.BINTRAY_KEY }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
-      - name: Gradle :mirai-console:fillBuildConstants
-        run: ./gradlew :mirai-console:fillBuildConstants -Dbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_user=${{ secrets.BINTRAY_USER }} -Dbintray_key=${{ secrets.BINTRAY_KEY }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
-      - name: Gradle :mirai-console:bintrayUpload
-        run: ./gradlew :mirai-console:bintrayUpload -Dbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_user=${{ secrets.BINTRAY_USER }} -Dbintray_key=${{ secrets.BINTRAY_KEY }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
-      - name: Gradle :mirai-console-pure:bintrayUpload
-        run: ./gradlew :mirai-console-pure:bintrayUpload -Dbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_user=${{ secrets.BINTRAY_USER }} -Dbintray_key=${{ secrets.BINTRAY_KEY }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
-
+      - name: Gradle :mirai-console:shadowjar
+        run: ./gradlew :mirai-console:shadowjar
+      - name: Gradle :mirai-console-pure:shadowjar
+        run: ./gradlew :mirai-console-pure:shadowjar
+      - name: Create a Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The name of the tag. This should come from the webhook payload, `github.GITHUB_REF` when a user pushes a new tag:  
+          tag_name: ${{ github.ref }}
+          # The name of the release. For example, `Release v1.0.1`
+          release_name: Release ${{ github.ref }}
+          # Text describing the contents of the tag.
+          # body: # optional
+          # `true` to create a draft (unpublished) release, `false` to create a published one. Default: `false`
+          # draft: # optional
+          # `true` to identify the release as a prerelease. `false` to identify the release as a full release. Default: `false`
+          # prerelease: # optional
+      - name: Upload a Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The URL for uploading assets to the release
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # The path to the asset you want to upload
+          asset_path: mirai-console/build/libs/mirai-console-pure-1.0-M2-all.jar
+          # The name of the asset you want to upload
+          asset_name: mirai-console-pure-${{ steps.create_release.outputs.tag }}-all.jar
+          # The content-type of the asset you want to upload. See the supported Media Types here: https://www.iana.org/assignments/media-types/media-types.xhtml for more information
+          asset_content_type: application/jar
+      - name: Upload a Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The URL for uploading assets to the release
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # The path to the asset you want to upload
+          asset_path: mirai-console/build/libs/mirai-console-1.0-M2-all.jar
+          # The name of the asset you want to upload
+          asset_name: mirai-console-${{ steps.create_release.outputs.tag }}-all.jar
+          # The content-type of the asset you want to upload. See the supported Media Types here: https://www.iana.org/assignments/media-types/media-types.xhtml for more information
+          asset_content_type: application/jar
