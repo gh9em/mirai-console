@@ -55,9 +55,9 @@ jobs:
           # The URL for uploading assets to the release
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           # The path to the asset you want to upload
-          asset_path: frontend/mirai-console-pure/build/libs/mirai-console-pure-1.0-M2-all.jar
+          asset_path: backend/mirai-console/build/libs/mirai-console-1.0-M2-all.jar
           # The name of the asset you want to upload
-          asset_name: mirai-console-pure-${{ steps.create_release.outputs.tag }}-all.jar
+          asset_name: mirai-console-${{ steps.create_release.outputs.tag }}-all.jar
           # The content-type of the asset you want to upload. See the supported Media Types here: https://www.iana.org/assignments/media-types/media-types.xhtml for more information
           asset_content_type: application/jar
       - name: Upload a Release Asset
@@ -68,8 +68,8 @@ jobs:
           # The URL for uploading assets to the release
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           # The path to the asset you want to upload
-          asset_path: backend/mirai-console/build/libs/mirai-console-1.0-M2-all.jar
+          asset_path: frontend/mirai-console-pure/build/libs/mirai-console-pure-1.0-M2-all.jar
           # The name of the asset you want to upload
-          asset_name: mirai-console-${{ steps.create_release.outputs.tag }}-all.jar
+          asset_name: mirai-console-pure-${{ steps.create_release.outputs.tag }}-all.jar
           # The content-type of the asset you want to upload. See the supported Media Types here: https://www.iana.org/assignments/media-types/media-types.xhtml for more information
           asset_content_type: application/jar
